@@ -1,0 +1,291 @@
+// -----------------------------------------------------------
+// 💻 APLICATIVO MEJORADO: Registro de Computadoras
+// Diseño moderno, colores, íconos y mejor estética.
+// -----------------------------------------------------------
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ComputadorasApp());
+}
+
+class ComputadorasApp extends StatelessWidget {
+  const ComputadorasApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Registro de Computadoras',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        useMaterial3: true,
+        fontFamily: 'Roboto',
+      ),
+      home: const InicioPage(),
+    );
+  }
+}
+
+// -----------------------------------------------------------
+// 🏠 PANTALLA 1: INICIO
+// -----------------------------------------------------------
+class InicioPage extends StatefulWidget {
+  const InicioPage({super.key});
+
+  @override
+  State<InicioPage> createState() => _InicioPageState();
+}
+
+class _InicioPageState extends State<InicioPage> {
+  final List<Map<String, String>> computadoras = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.indigo.shade50,
+      appBar: AppBar(
+        title: const Text('Registro de Computadoras'),
+        centerTitle: true,
+        backgroundColor: Colors.indigo.shade400,
+        foregroundColor: Colors.white,
+        elevation: 5,
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.desktop_windows, size: 100, color: Colors.indigo),
+              const SizedBox(height: 20),
+              const Text(
+                'Bienvenido 👋',
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Administra tus computadoras de forma sencilla',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey, fontSize: 16),
+              ),
+              const SizedBox(height: 40),
+              FilledButton.icon(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          FormularioPage(computadoras: computadoras),
+                    ),
+                  );
+                  setState(() {});
+                },
+                icon: const Icon(Icons.add),
+                label: const Text('Agregar Computadora'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.indigo,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 25, vertical: 15),
+                  textStyle: const TextStyle(fontSize: 18),
+                ),
+              ),
+              const SizedBox(height: 20),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ListaPage(computadoras: computadoras),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.list),
+                label: const Text('Ver Lista'),
+                style: OutlinedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                  textStyle: const TextStyle(fontSize: 18),
+                  side: BorderSide(color: Colors.indigo.shade400, width: 2),
+                  foregroundColor: Colors.indigo.shade700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// -----------------------------------------------------------
+// 🧾 PANTALLA 2: FORMULARIO
+// -----------------------------------------------------------
+class FormularioPage extends StatefulWidget {
+  final List<Map<String, String>> computadoras;
+  const FormularioPage({super.key, required this.computadoras});
+
+  @override
+  State<FormularioPage> createState() => _FormularioPageState();
+}
+
+class _FormularioPageState extends State<FormularioPage> {
+  final _formKey = GlobalKey<FormState>();
+  final idCtrl = TextEditingController();
+  final tipoCtrl = TextEditingController();
+  final marcaCtrl = TextEditingController();
+  final cpuCtrl = TextEditingController();
+  final ramCtrl = TextEditingController();
+  final hddCtrl = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.indigo.shade50,
+      appBar: AppBar(
+        title: const Text('Agregar Computadora'),
+        backgroundColor: Colors.indigo.shade400,
+        foregroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 5,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Card(
+          elevation: 5,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: [
+                  const SizedBox(height: 10),
+                  campoTexto('ID', idCtrl, Icons.confirmation_number),
+                  campoTexto('Tipo', tipoCtrl, Icons.devices),
+                  campoTexto('Marca', marcaCtrl, Icons.branding_watermark),
+                  campoTexto('CPU', cpuCtrl, Icons.memory),
+                  campoTexto('RAM', ramCtrl, Icons.sd_storage),
+                  campoTexto('HDD', hddCtrl, Icons.save),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        widget.computadoras.add({
+                          'id': idCtrl.text,
+                          'tipo': tipoCtrl.text,
+                          'marca': marcaCtrl.text,
+                          'cpu': cpuCtrl.text,
+                          'ram': ramCtrl.text,
+                          'hdd': hddCtrl.text,
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('💾 Computadora guardada')),
+                        );
+                        Navigator.pop(context);
+                      }
+                    },
+                    icon: const Icon(Icons.save_alt),
+                    label: const Text('Guardar Registro'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.indigo,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      textStyle: const TextStyle(fontSize: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget campoTexto(String label, TextEditingController controller, IconData icono) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          prefixIcon: Icon(icono, color: Colors.indigo),
+          labelText: label,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        validator: (value) =>
+            value == null || value.isEmpty ? 'Ingrese $label' : null,
+      ),
+    );
+  }
+}
+
+// -----------------------------------------------------------
+// 📋 PANTALLA 3: LISTA DE COMPUTADORAS
+// -----------------------------------------------------------
+class ListaPage extends StatelessWidget {
+  final List<Map<String, String>> computadoras;
+  const ListaPage({super.key, required this.computadoras});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.indigo.shade50,
+      appBar: AppBar(
+        title: const Text('Lista de Computadoras'),
+        centerTitle: true,
+        backgroundColor: Colors.indigo.shade400,
+        foregroundColor: Colors.white,
+      ),
+      body: computadoras.isEmpty
+          ? const Center(
+              child: Text(
+                'No hay computadoras registradas 😅',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(10),
+              itemCount: computadoras.length,
+              itemBuilder: (context, index) {
+                final comp = computadoras[index];
+                return Card(
+                  color: Colors.white,
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.indigo.shade300,
+                      child: Text(
+                        comp['id']!,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    title: Text(
+                      '${comp['tipo']} - ${comp['marca']}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                    subtitle: Text(
+                      'CPU: ${comp['cpu']} • RAM: ${comp['ram']} • HDD: ${comp['hdd']}',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    trailing: const Icon(Icons.computer, color: Colors.indigo),
+                  ),
+                );
+              },
+            ),
+    );
+  }
+}
